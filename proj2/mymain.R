@@ -73,9 +73,7 @@ preprocess.svd <- function(train, n.comp){
 naive_model<- function(train_ts, test_ts){
   num_forecasts <- nrow(test_ts)
   train_ts[is.na(train_ts)] <- 0
-  
   train_ts <- preprocess.svd(train_ts, num_forecasts)
-  
   # naive forecast per store
   for(j in 2:ncol(train_ts)){
     store_ts <- ts(train_ts[, j], frequency=52)
@@ -88,9 +86,7 @@ naive_model<- function(train_ts, test_ts){
 tslm_model <- function (train_ts, test_ts) {
   num_forecasts <- nrow(test_ts)
   train_ts[is.na(train_ts)] <- 0
-  
   train_ts <- preprocess.svd(train_ts, num_forecasts)
-  
   for (j in 2:ncol(train_ts)) {
     store_ts = ts(train_ts[,j], frequency = 52)
     fit <- tslm(store_ts ~ trend + season)
@@ -103,9 +99,7 @@ tslm_model <- function (train_ts, test_ts) {
 stlf_model <- function (train_ts, test_ts) {
   num_forecasts <- nrow(test_ts)
   train_ts[is.na(train_ts)] <- 0
-  
   train_ts <- preprocess.svd(train_ts, num_forecasts)
-  
   for (j in 2:ncol(train_ts)) {
     store_ts = ts(train_ts[,j], frequency = 52)
     
@@ -205,10 +199,8 @@ mypredict <- function() {
     ###### Model Fitting / Forecasting ######
     # f_naive <- naive_model(train_dept_ts, test_dept_ts)
     # test_month <- update_forecast(test_month, f_naive, dept, 1) # 1821.882    
-    # 
     # f_tslm <- tslm_model(train_dept_ts, test_dept_ts)
     # test_month <- update_forecast(test_month, f_tslm, dept, 2) # 1611.366
-    
     # f_stlf <- stlf_model(train_dept_ts, test_dept_ts)
     # test_month <- update_forecast(test_month, f_stlf, dept, 3) #1571.524 
     
