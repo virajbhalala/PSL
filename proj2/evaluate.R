@@ -1,5 +1,7 @@
+
+
 library(tidyverse)
-setwd("Desktop/Masters/PSL/PSL/proj2/")
+# setwd("Desktop/Masters/PSL/PSL/proj2/")
 
 source("mymain.R")
 # read in train / test dataframes
@@ -17,10 +19,11 @@ wae <- tibble(
   model_two = rep(0, num_folds), 
   model_three = rep(0, num_folds)
 )
+start.time <- Sys.time()
 
 # time-series CV
-# for (t in 1:num_folds) {
-for (t in 1:1) {
+for (t in 1:num_folds) {
+# for (t in 1:1) {
   # *** THIS IS YOUR PREDICTION FUNCTION ***
   mypredict()
   
@@ -44,3 +47,6 @@ for (t in 1:1) {
 # save results to a file for grading
 readr::write_csv(wae, 'Error.csv')
 colMeans(wae)
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+print(paste0("time taken: ", time.taken))

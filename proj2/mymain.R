@@ -70,7 +70,7 @@ preprocess.svd <- function(train, n.comp){
   train
 }
 
-naive_model<- function(train_ts, test_ts){
+snaive_model<- function(train_ts, test_ts){
   num_forecasts <- nrow(test_ts)
   train_ts[is.na(train_ts)] <- 0
   train_ts <- preprocess.svd(train_ts, num_forecasts)
@@ -114,7 +114,7 @@ stlf_model <- function (train_ts, test_ts) {
   return(test_ts)
 }
 
-hybrid_model <- function (train_ts, test_ts) {
+autoarima_model <- function (train_ts, test_ts) {
   num_forecasts <- nrow(test_ts)
   train_ts[is.na(train_ts)] <- 0
   
@@ -124,8 +124,9 @@ hybrid_model <- function (train_ts, test_ts) {
   # for (j in 2:2) {
       
     store_ts = ts(train_ts[,j], frequency = 52)
-    fit <- hybridModel(store_ts, weights="equal")
-    test_ts[, j] <- forecast(fit, NROW(test_ts[,1]))$mean
+    # fit <- hybridModel(store_ts, weights="equal")
+    fit <- auto.arima(store_ts)
+    test_ts[, j] <- forecast(fit, h = NROW(test_ts[,1]))$mean
   }
   return(test_ts)
 }
@@ -197,15 +198,15 @@ mypredict <- function() {
       spread(Store, Weekly_Sales)
     
     ###### Model Fitting / Forecasting ######
-    # f_naive <- naive_model(train_dept_ts, test_dept_ts)
-    # test_month <- update_forecast(test_month, f_naive, dept, 1) # 1821.882    
-    # f_tslm <- tslm_model(train_dept_ts, test_dept_ts)
-    # test_month <- update_forecast(test_month, f_tslm, dept, 2) # 1611.366
-    # f_stlf <- stlf_model(train_dept_ts, test_dept_ts)
-    # test_month <- update_forecast(test_month, f_stlf, dept, 3) #1571.524 
+    f_naive <- snaive_model(train_dept_ts, test_dept_ts)
+    test_month <- update_forecast(test_month, f_naive, dept, 3) # 1821.882
+    f_tslm <- tslm_model(train_dept_ts, test_dept_ts)
+    test_month <- update_forecast(test_month, f_tslm, dept, 2) # 1611.366
+    f_stlf <- stlf_model(train_dept_ts, test_dept_ts)
+    test_month <- update_forecast(test_month, f_stlf, dept, 1) #1571.524
     
-    f_hybrid <- hybrid_model(train_dept_ts, test_dept_ts)
-    test_month <- update_forecast(test_month, f_hybrid, dept, 3)
+    # f_hybrid <- autoarima_model(train_dept_ts, test_dept_ts)
+    # test_month <- update_forecast(test_month, f_hybrid, dept, 3) #2259.804
     
     
     
