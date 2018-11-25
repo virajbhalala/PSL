@@ -1,4 +1,6 @@
-#########################################################################
+# setwd("/Users/vbhalala/Desktop/masters/PSL/PSL/proj3/")
+# 
+########################################################################
 # log-loss function
 logLoss <- function(y, p){
     if (length(p) != length(y)){
@@ -45,3 +47,8 @@ write.table(run.time, file = 'proj_3.csv', sep = ',',
             row.names = FALSE, col.names = FALSE, append = TRUE)
 
 print(err)
+
+
+#best 0.4491881 fold 1 8.646931
+#best 0.4498 fold 2  6.835867914
+#best 0.4491 fold 3  8.072161

@@ -1,5 +1,5 @@
 set.seed(0544)
-myPackages = c("glmnet", "doMC", "xgboost", "gbm", "h2o")
+myPackages = c("glmnet", "doMC", "xgboost", "gbm")
 missingPackages = setdiff(myPackages, rownames(installed.packages())) 
 if (length(missingPackages) > 0) { 
     install.packages(missingPackages)
@@ -31,7 +31,6 @@ train$home_ownership[train$home_ownership == "ANY" | train$home_ownership == "NO
 train$annual_inc = log(train$annual_inc + 1)
 train$dti[is.na(train$dti)] = 0
 earliest_cr_line = as.numeric(matrix(unlist(strsplit(as.character(train$earliest_cr_line), "-")), ncol = 2, byrow = TRUE)[ ,2])
-# train$earliest_cr_line = earliest_cr_line - min(earliest_cr_line)
 train$earliest_cr_line = earliest_cr_line
 train$fico = (train$fico_range_low + train$fico_range_high) / 2
 colnames(train)[colSums(is.na(train)) > 0]
@@ -62,7 +61,6 @@ test$home_ownership[test$home_ownership == "ANY" | test$home_ownership == "NONE"
 test$annual_inc = log(test$annual_inc + 1)
 test$dti[is.na(test$dti)] = 0
 earliest_cr_line = as.numeric(matrix(unlist(strsplit(as.character(test$earliest_cr_line), "-")), ncol = 2, byrow = TRUE)[ ,2])
-# test$earliest_cr_line = earliest_cr_line - min(earliest_cr_line)
 test$earliest_cr_line = earliest_cr_line
 test$fico = (test$fico_range_low + test$fico_range_high) / 2
 colnames(test)[colSums(is.na(test)) > 0]
@@ -81,18 +79,14 @@ test.X = model.matrix(~ ., test)
 
 
 start.time = Sys.time()
-model2 = xgboost(data = train.X
-                 ,label = train.Y
-                 ,nrounds = 200
-                 ,objective = "binary:logistic"
-                 ,eval_metric = "logloss"
-                 ,max_depth = 3
-                 ,print_every_n = 1
-                 ,verbose = 2)
-model2.predictions = predict(model2, test.X)
+model1 = xgboost(data = train.X ,label = train.Y,nrounds = 100 ,objective = "binary:logistic",eval_metric = "logloss",max_depth = 4,print_every_n = 1,verbose = 1)
+model1.predictions = predict(model1, test.X)
 write.csv(data.frame(id = rownames(test.X),
-                     prob = model2.predictions),
+                     prob = model1.predictions),
                       "mysubmission1.txt",
                       row.names = FALSE,
                       quote = FALSE)
+
+
+
 print(paste0("Run time: ", as.numeric(difftime(Sys.time(), start.time, units = 'min'))))
