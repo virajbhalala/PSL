@@ -83,7 +83,7 @@ test.X = model.matrix(~ ., test)
 start.time = Sys.time()
 model2 = xgboost(data = train.X
                  ,label = train.Y
-                 ,nrounds = 500
+                 ,nrounds = 200
                  ,objective = "binary:logistic"
                  ,eval_metric = "logloss"
                  ,max_depth = 3
